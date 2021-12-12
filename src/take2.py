@@ -10,7 +10,7 @@ sender_addr = "team@hnttax.us"
 sender_email = Address(display_name="hntTax", username="team", domain="hnttax.us")
 smtp_server_addr = "mail.hnttax.us"
 
-receiver_email = ["haley@hnttax.us", "haleymorgan3264@gmail.com", "danidiloreto14@gmail.com"]
+receiver_email = ["haley@hnttax.us", "haleymorgan3264@gmail.com"]
 
 msg = EmailMessage()
 msg["Subject"] = "testing hnttax automated email"
@@ -30,7 +30,7 @@ with open(hmtl_file) as html:
 
 
 # Now add the related image to the html part.
-with open("qrcode.png", 'rb') as img:
+with open("qrcode.jpg", 'rb') as img:
     msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg',
                                      cid=qrcode_cid)
 
