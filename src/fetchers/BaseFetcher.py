@@ -67,10 +67,10 @@ class BaseFetcher:
             rows = hnt_db.execute(select_stmt).fetchall()
 
             if not rows:
-                logger.info(f"[{self.DB_TABLE_NAME}] end of retrieval of data rows from Wordpress db")
+                logger.info(f"[{self.DB_TABLE_NAME}] end of retrieval of data rows from HNTTAX db")
                 break
 
-            logger.info(f"[{self.DB_TABLE_NAME}] retrieved {len(rows)} row(s) of data from Wordpress db")
+            logger.info(f"[{self.DB_TABLE_NAME}] retrieved {len(rows)} row(s) of data from HNTTAX db")
             yield rows
 
             # get max entry_id value given last set of rows
