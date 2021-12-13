@@ -4,13 +4,13 @@ from fetchers.CsvEmailFetcher import CsvEmailFetcher
 from loguru import logger
 from utils import generate_email_content
 from utils.email import send_email
-
+from sqlalchemy import update
 
 def send_csv_emails(status, db_id):
     # where status can be None, processed, error, empty, or all
 
     fetcher = CsvEmailFetcher()
-    table = fetcher.DB_TABLE_NAME
+    table = hnt_metadata.tables[fetcher.DB_TABLE_NAME]
     
     # this is used to set subject of emails sent
     subject_map = {
@@ -33,3 +33,11 @@ def send_csv_emails(status, db_id):
             # send email
             logger.info(f"[{fetcher.DB_TABLE_NAME}] sending email to {item['email']} (id {item['id']})")
             send_email(item['email'], subject=subject_map[item['status']])
+
+            # once email has been sent, update the "status" in the db
+            update_status = table.update().where(table.c.id == int(item['id'])).values(status="sent")
+            hnt_db.execute(update_status)
+
+            logger.info(f"[{fetcher.DB_TABLE_NAME}] email sent for id {item['id']}, status updated in db")
+
+    logger.info(f"[{fetcher.DB_TABLE_NAME}] DONE - csv emails sent")
