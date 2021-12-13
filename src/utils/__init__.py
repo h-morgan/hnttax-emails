@@ -1,6 +1,7 @@
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
 import os
+import boto3
 
 
 def get_template_file_path(filename):
@@ -38,3 +39,14 @@ def generate_email_content(status, wallet, year, filetype):
         output.write(file_contents)
 
     return file_contents
+
+
+def get_csv_from_aws(path):
+    s3 = boto3.resource('s3')
+    s3_bucket = s3.Bucket("service-outputs")
+
+    local_file = "temp_rewards.csv"
+    s3_bucket.download_file(path, local_file)
+
+    return local_file
+            

@@ -27,7 +27,7 @@ def send_email(to_address, subject, attachment=None):
     msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = to_address
-    msg["Cc"] = ','.join(["danidiloreto14@gmail.com", "haley@hnttax.us"])
+    msg["Cc"] = "haley@hnttax.us"
 
     # add plain text version of message 
     txtfile = "temp.txt"
@@ -39,6 +39,8 @@ def send_email(to_address, subject, attachment=None):
     qrcode_cid = make_msgid()
     with open(htmlfile) as html:
         msg.add_alternative(html.read().format(qrcode_cid=qrcode_cid[1:-1]), subtype='html')
+    
+    # TODO: add csv attachment to message
 
     # Now add the related image to the html part.
     with open("qrcode.jpg", 'rb') as img:
