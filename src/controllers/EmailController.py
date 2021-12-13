@@ -1,10 +1,11 @@
+from dotenv.main import load_dotenv
 from db.hntdb import hnt_db_engine as hnt_db
 from db.hntdb import hnt_metadata
 from fetchers.CsvEmailFetcher import CsvEmailFetcher
 from loguru import logger
-from utils import generate_email_content
+from utils import generate_email_content, get_csv_from_aws
 from utils.email import send_email
-from sqlalchemy import update
+
 
 def send_csv_emails(status, db_id):
     # where status can be None, processed, error, empty, or all
@@ -29,10 +30,16 @@ def send_csv_emails(status, db_id):
             # build hmtl/text file templates
             html = generate_email_content(item['status'], item['wallet'], item['year'], filetype="html")
             text = generate_email_content(item['status'], item['wallet'], item['year'], filetype="txt")
-            
+
+            # TODO: get csv attachment from s3 using id
+
+            # build filename to retrieve csv rewards from aws
+            s3_file = f"csv_summary/{item['year']}/{item['id']}_{item['year']}_{item['wallet'][0:7]}.csv"
+            local_csv = get_csv_from_aws(s3_file)
+
             # send email
             logger.info(f"[{fetcher.DB_TABLE_NAME}] sending email to {item['email']} (id {item['id']})")
-            send_email(item['email'], subject=subject_map[item['status']])
+            send_email(item['email'], subject=subject_map[item['status']], attachment=local_csv)
 
             # once email has been sent, update the "status" in the db
             update_status = table.update().where(table.c.id == int(item['id'])).values(status="sent")
