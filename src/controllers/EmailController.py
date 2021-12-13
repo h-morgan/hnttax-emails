@@ -22,6 +22,10 @@ def send_csv_emails(status, db_id):
 
     # get row(s) from hnttax db for which to send email for
     for item in fetcher.get_items(status=status, id=db_id):
+
+        if item['status'] == "sent":
+            logger.warning(f"[{fetcher.DB_TABLE_NAME}] retrieved already-sent row, skipping: id {item['id']}")
+            continue
         
         if item['currency'] != "USD":
             logger.error(f"[{fetcher.DB_TABLE_NAME}] non-USD currency ({item['id'], }{item['currency']}) - no automated email support yet, terminating")
@@ -30,8 +34,6 @@ def send_csv_emails(status, db_id):
             # build hmtl/text file templates
             html = generate_email_content(item['status'], item['wallet'], item['year'], filetype="html")
             text = generate_email_content(item['status'], item['wallet'], item['year'], filetype="txt")
-
-            # TODO: get csv attachment from s3 using id
 
             # build filename to retrieve csv rewards from aws
             s3_file = f"csv_summary/{item['year']}/{item['id']}_{item['year']}_{item['wallet'][0:7]}.csv"
