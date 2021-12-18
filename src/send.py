@@ -26,10 +26,6 @@ def run(request, status, id):
     elif request == "csv":
         logger.info(f"[{service_name}] csv request emails - preparing to send")
 
-        # TODO: buildout functionality to bulk send emails for specific statuses
-        if status in ("empty", "error", "all") and id is None:
-            logger.warning(f"[{service_name}] bulk email by status is not yet supported, terminating")  
-
         if id:
             logger.info(f"[{service_name}] sending email for db id: {id}")
             send_csv_emails(status, id)
