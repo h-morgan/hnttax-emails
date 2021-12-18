@@ -41,23 +41,27 @@ def send_csv_emails(status, db_id):
             html = generate_email_content(item['status'], item['wallet'], item['year'], filetype="html")
             text = generate_email_content(item['status'], item['wallet'], item['year'], filetype="txt")
 
+            # we only need tp get an attachment csv if the status is processed, else skip this part
             # build filename to retrieve csv rewards from aws
-            s3_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}.csv"
-            s3_path = f"csv_summary/{item['year']}/{s3_filename}"
-            local_csv = get_csv_from_aws(s3_path)
+            attachment = None
+            if item['status'] == 'processed':
+                s3_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}.csv"
+                s3_path = f"csv_summary/{item['year']}/{s3_filename}"
+                attachment = get_csv_from_aws(s3_path)
 
             # send email
             logger.info(f"[{fetcher.DB_TABLE_NAME}] sending email to {item['email']} (id {item['id']})")
-            send_email(item['email'], subject=subject_map[item['status']], attachment=local_csv)
+            send_email(item['email'], subject=subject_map[item['status']], attachment=attachment)
 
             # once email has been sent, update the "status" in the db
             update_status = table.update().where(table.c.id == int(item['id'])).values(status="sent")
             hnt_db.execute(update_status)
 
             # delete local csv
-            os.remove(local_csv)
+            if attachment:
+                os.remove(attachment)
 
             logger.info(f"[{fetcher.DB_TABLE_NAME}] email sent for id {item['id']}, status updated in db")
-            emails_sent += 0
+            emails_sent += 1
 
     logger.info(f"[{fetcher.DB_TABLE_NAME}] DONE - {emails_sent} csv emails sent")
