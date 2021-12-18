@@ -39,13 +39,16 @@ def send_email(to_address, subject, attachment=None):
     qrcode_cid = make_msgid()
     with open(htmlfile) as html:
         msg.add_alternative(html.read().format(qrcode_cid=qrcode_cid[1:-1]), subtype='html')
-    
-    # TODO: add csv attachment to message
 
     # Now add the related image to the html part.
     with open("qrcode.jpg", 'rb') as img:
         msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg',
                                         cid=qrcode_cid)
+
+    # add csv attachment to message
+    with open(attachment, 'rb') as attach:
+        content = attach.read()
+        msg.add_attachment(content, maintype='application', subtype='csv', filename="hnt_rewards.csv")
 
     context = ssl.create_default_context()
 
