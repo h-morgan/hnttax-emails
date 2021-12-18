@@ -27,7 +27,7 @@ def send_email(to_address, subject, attachment=None):
     msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = to_address
-    msg["Cc"] = "haley@hnttax.us"
+    msg["Cc"] = "team@hnttax.us"
 
     # add plain text version of message 
     txtfile = "temp.txt"
@@ -45,10 +45,11 @@ def send_email(to_address, subject, attachment=None):
         msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg',
                                         cid=qrcode_cid)
 
-    # add csv attachment to message
-    with open(attachment, 'rb') as attach:
-        content = attach.read()
-        msg.add_attachment(content, maintype='application', subtype='csv', filename="hnt_rewards.csv")
+    # add csv attachment to message (if we have one, errors and emptys wont)
+    if attachment:
+        with open(attachment, 'rb') as attach:
+            content = attach.read()
+            msg.add_attachment(content, maintype='application', subtype='csv', filename="hnt_rewards.csv")
 
     context = ssl.create_default_context()
 
