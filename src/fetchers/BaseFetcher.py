@@ -36,7 +36,7 @@ class BaseFetcher:
         
         # if given a status, only get db entries with this status
         elif status == "all":
-            select_stmt = select_stmt.where(table.c.status in all_statuses_to_send)
+            select_stmt = select_stmt.where(table.c.status.in_(all_statuses_to_send))
         
         elif status is not None:
             select_stmt = select_stmt.where(table.c.status == status)
@@ -59,7 +59,7 @@ class BaseFetcher:
             logger.info(f"[{self.DB_TABLE_NAME}] getting id {id} from HNTTAX db")
 
         else:
-            logger.info(f"[{self.DB_TABLE_NAME}] getting batches of {self.batch_size} from HNTTAX db")
+            logger.info(f"[{self.DB_TABLE_NAME}] getting batches of {self.batch_size} from HNTTAX db with status: {status}")
         
         max_id = None
         while True:
