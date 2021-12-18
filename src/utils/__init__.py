@@ -35,10 +35,11 @@ def generate_email_content(status, wallet, year, filetype):
         year = year
     )
     # save temp file 
-    with open(f"temp.{filetype}", "w") as output:
+    temp_filename = f"temp.{filetype}"
+    with open(temp_filename, "w") as output:
         output.write(file_contents)
 
-    return file_contents
+    return temp_filename
 
 
 def get_csv_from_aws(path):
