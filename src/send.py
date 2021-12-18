@@ -8,7 +8,7 @@ from controllers.EmailController import send_csv_emails
 
 @click.command()
 @click.option("--request", '-r', default="csv", type=click.Choice(["csv", "schc"]))
-@click.option("--status", '-s', default="all", type=click.Choice(["success", "empty", "error", "all"]))
+@click.option("--status", '-s', default="all", type=click.Choice(["processed", "empty", "error", "all"]))
 @click.option("--id", default=None, help="the id for the row in the hnttax db to create/send an email for")
 def run(request, status, id):
 
@@ -27,11 +27,15 @@ def run(request, status, id):
         logger.info(f"[{service_name}] csv request emails - preparing to send")
 
         # TODO: buildout functionality to bulk send emails for specific statuses
-        if status in ("success", "empty", "error", "all") and id is None:
+        if status in ("empty", "error", "all") and id is None:
             logger.warning(f"[{service_name}] bulk email by status is not yet supported, terminating")  
 
         if id:
             logger.info(f"[{service_name}] sending email for db id: {id}")
+            send_csv_emails(status, id)
+        
+        else:
+            logger.info(f"[{service_name}] sending email for csv db rows with status: {status}")
             send_csv_emails(status, id)
 
 
