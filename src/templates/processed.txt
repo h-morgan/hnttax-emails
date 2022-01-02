@@ -1,6 +1,6 @@
 Hi,
 
-Thanks for using our services at hntTax to compile your HNT mining rewards summary. Attached is a CSV containing a breakdown of all rewards activity associated with wallet {{ wallet }} for tax year {{ year }} (thus far).
+Thanks for using our services at hntTax to compile your HNT mining rewards summary. Attached is a CSV containing a breakdown of all rewards activity associated with wallet {{ wallet }} for tax year {{ year }}.
  
 Our team of Certified Public Accountants (CPAs) at hntTax are available to help you with preparing the forms needed to report your Helium mining activity for this tax year. If you pay US taxes, and this is something that would be helpful to you, please view our services page to learn more.
 
