@@ -7,6 +7,7 @@ The task retrieves new form entries from AWS postgres database, looks at the sta
 
 ## Table of Contents
 - [Initial Setup](#initial-setup)
+- [How to run](#how-to-run)
 
 
 ## Initial Setup
