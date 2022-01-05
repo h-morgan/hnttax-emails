@@ -27,7 +27,7 @@ def send_email(to_address, subject, attachment=None):
     msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = to_address
-    msg["Cc"] = "team@hnttax.us"
+    msg["Cc"] = "haley@hnttax.us"
 
     # add plain text version of message 
     txtfile = "temp.txt"
@@ -42,8 +42,12 @@ def send_email(to_address, subject, attachment=None):
 
     # Now add the related image to the html part.
     with open("qrcode.jpg", 'rb') as img:
-        msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg',
-                                        cid=qrcode_cid)
+        msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg', cid=qrcode_cid)
+
+    # attach the qrcode itself as (image) as attachment as well
+    with open("qrcode.jpg", "rb") as qrattach:
+        qr = qrattach.read()
+        msg.add_attachment(qr, maintype='application', subtype='jpg', filename="qrcode.jpg")
 
     # add csv attachment to message (if we have one, errors and emptys wont)
     if attachment:
