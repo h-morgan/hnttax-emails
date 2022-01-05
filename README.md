@@ -34,3 +34,7 @@ After activating the virtual environment, install the required Python packages:
 ```
 pip3 install -r requirements.txt
 ```
+
+## How to Run
+
+Navigate into the project's `src/` directory, where you will find `send.py`, which is the main entrypoint for the cli tool. 
