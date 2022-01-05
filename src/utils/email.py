@@ -27,7 +27,7 @@ def send_email(to_address, subject, attachment=None):
     msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = to_address
-    msg["Cc"] = "haley@hnttax.us"
+    msg["Cc"] = "team@hnttax.us"
 
     # add plain text version of message 
     txtfile = "temp.txt"
