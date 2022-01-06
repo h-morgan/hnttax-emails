@@ -31,7 +31,7 @@ def send_csv_emails(status, db_id):
             logger.warning(f"[{fetcher.DB_TABLE_NAME}] retrieved already-sent row, skipping: id {item['id']}")
             continue
         
-        if item['currency'] != "USD":
+        if item['currency'] != "USD" and item['status'] == "processed":
             logger.error(f"[{fetcher.DB_TABLE_NAME}] non-USD currency ({item['id']}, {item['currency']}) - no automated email support yet, terminating")
             continue
         
