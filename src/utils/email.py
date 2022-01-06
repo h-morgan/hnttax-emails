@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from loguru import logger
 from utils import get_template_file_path
+import mimetypes
 
 
 load_dotenv()
@@ -27,7 +28,7 @@ def send_email(to_address, subject, attachment=None):
     msg["Subject"] = subject
     msg["From"] = sender_email
     msg["To"] = to_address
-    msg["Cc"] = "team@hnttax.us"
+    msg["Cc"] = "haley@hnttax.us"
 
     # add plain text version of message 
     txtfile = "temp.txt"
@@ -36,18 +37,16 @@ def send_email(to_address, subject, attachment=None):
 
     # add html version
     htmlfile = "temp.html"
-    qrcode_cid = make_msgid()
+    qrcode_cid = make_msgid(domain="hnttax.us")
     with open(htmlfile) as html:
         msg.add_alternative(html.read().format(qrcode_cid=qrcode_cid[1:-1]), subtype='html')
 
     # Now add the related image to the html part.
     with open("qrcode.jpg", 'rb') as img:
-        msg.get_payload()[1].add_related(img.read(), 'image', 'jpeg', cid=qrcode_cid)
-
-    # attach the qrcode itself as (image) as attachment as well
-    with open("qrcode.jpg", "rb") as qrattach:
-        qr = qrattach.read()
-        msg.add_attachment(qr, maintype='application', subtype='jpg', filename="qrcode.jpg")
+        # know the Content-Type of the image
+        maintype, subtype = mimetypes.guess_type(img.name)[0].split('/')
+        # attach it
+        msg.get_payload()[1].add_related(img.read(), maintype=maintype, subtype=subtype, cid=qrcode_cid)
 
     # add csv attachment to message (if we have one, errors and emptys wont)
     if attachment:
