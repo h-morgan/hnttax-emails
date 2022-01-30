@@ -62,8 +62,10 @@ def send_csv_emails(status, db_id):
             hnt_db.execute(update_status)
 
             # delete local csv
-            if attachment:
-                os.remove(attachment)
+            if hotspot_attachment:
+                os.remove(hotspot_attachment)
+            if validator_attachment:
+                os.remove(validator_attachment)
 
             logger.info(f"[{fetcher.DB_TABLE_NAME}] email sent for id {item['id']}, status updated in db")
             emails_sent += 1
