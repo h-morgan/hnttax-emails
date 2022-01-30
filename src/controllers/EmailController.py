@@ -45,13 +45,17 @@ def send_csv_emails(status, db_id):
             # build filename to retrieve csv rewards from aws
             attachment = None
             if item['status'] == 'processed':
-                s3_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}.csv"
-                s3_path = f"csv_summary/{item['year']}/{s3_filename}"
-                attachment = get_csv_from_aws(s3_path)
+                s3_hotspot_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}_hotspots.csv"
+                s3_validator_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}_validators.csv"
+                s3_hotspot_path = f"csv_summary/{item['year']}/{s3_hotspot_filename}"
+                s3_validator_path = f"csv_summary/{item['year']}/{s3_validator_filename}"
+                
+                hotspot_attachment = get_csv_from_aws(s3_hotspot_path, "temp_hotspot.csv")
+                validator_attachment= get_csv_from_aws(s3_validator_path, "temp_validator.csv")
 
             # send email
             logger.info(f"[{fetcher.DB_TABLE_NAME}] sending email to {item['email']} (id {item['id']})")
-            send_email(item['email'], subject=subject_map[item['status']], attachment=attachment)
+            send_email(item['email'], subject=subject_map[item['status']], hotspot_attachment=hotspot_attachment, validator_attachment=validator_attachment)
 
             # once email has been sent, update the "status" in the db
             update_status = table.update().where(table.c.id == int(item['id'])).values(status="sent")
