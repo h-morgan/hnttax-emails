@@ -2,6 +2,8 @@ from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
 import os
 import boto3
+from loguru import logger
+import botocore
 
 
 def get_template_file_path(filename):
@@ -42,12 +44,18 @@ def generate_email_content(status, wallet, year, filetype):
     return temp_filename
 
 
-def get_csv_from_aws(path):
+def get_csv_from_aws(path, tempfile):
     s3 = boto3.resource('s3')
     s3_bucket = s3.Bucket("service-outputs")
 
-    local_file = "temp_rewards.csv"
-    s3_bucket.download_file(path, local_file)
+    local_file = tempfile
+
+    try:
+        s3_bucket.download_file(path, local_file)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            logger.info("The object does not exist.")
+            return
 
     return local_file
             
