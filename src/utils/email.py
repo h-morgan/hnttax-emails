@@ -18,7 +18,7 @@ SENDER_ADDR = SENDER_UN + "@hnttax.us"
 SENDER_PW = os.getenv("SENDER_PW")
 
 
-def send_email(to_address, subject, attachment=None):
+def send_email(to_address, subject, hotspot_attachment=None, validator_attachment=None):
 
     # build sender email address object / addr info
     sender_email = Address(display_name="hntTax", username=SENDER_UN, domain="hnttax.us")
@@ -49,10 +49,16 @@ def send_email(to_address, subject, attachment=None):
         msg.get_payload()[1].add_related(img.read(), maintype=maintype, subtype=subtype, cid=qrcode_cid)
 
     # add csv attachment to message (if we have one, errors and emptys wont)
-    if attachment:
-        with open(attachment, 'rb') as attach:
+    if hotspot_attachment:
+        with open(hotspot_attachment, 'rb') as attach:
             content = attach.read()
-            msg.add_attachment(content, maintype='application', subtype='csv', filename="hnt_rewards.csv")
+            msg.add_attachment(content, maintype='application', subtype='csv', filename="hnt_hotspot_rewards.csv")
+        
+    # add csv attachment to message (if we have one, errors and emptys wont)
+    if validator_attachment:
+        with open(validator_attachment, 'rb') as attach2:
+            content2 = attach2.read()
+            msg.add_attachment(content2, maintype='application', subtype='csv', filename="hnt_validator_rewards.csv")
 
     context = ssl.create_default_context()
 
