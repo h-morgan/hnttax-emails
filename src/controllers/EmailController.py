@@ -43,7 +43,9 @@ def send_csv_emails(status, db_id):
 
             # we only need tp get an attachment csv if the status is processed, else skip this part
             # build filename to retrieve csv rewards from aws
-            attachment = None
+            hotspot_attachment = None
+            validator_attachment = None
+
             if item['status'] == 'processed':
                 s3_hotspot_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}_hotspots.csv"
                 s3_validator_filename = f"{item['id']}_{item['year']}_{item['wallet'][0:7]}_validators.csv"

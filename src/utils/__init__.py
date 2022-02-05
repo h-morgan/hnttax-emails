@@ -54,7 +54,7 @@ def get_csv_from_aws(path, tempfile):
         s3_bucket.download_file(path, local_file)
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
-            logger.info("The object does not exist.")
+            logger.info(f"The object does not exist: {path}")
             return
 
     return local_file
