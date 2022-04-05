@@ -5,6 +5,11 @@
     <p>Hi,</p>
     <p>Thanks for using our services at hntTax to compile your HNT mining rewards summary. Attached is a CSV containing a breakdown of all rewards activity associated with wallet {{ wallet }} for tax year {{ year }}.
     </p>
+    {% if currency != 'USD' %}
+    <p>
+      Please note that since we are a US-based firm, we are primarily focused on USD requests at this time. Therefore, we are providing you with a free report of your Helium mining and rewards activity with USD-conversions. We appreciate you using our services, and have noted your request for {{ currency }} conversion. We hope to build out support for non-USD currencies in the near future.
+    </p>
+    {% endif %}
     <p>Our team of Certified Public Accountants (CPAs) at hntTax are available to help you with preparing the forms needed to report your Helium mining activity for this tax year. If you pay US taxes, and this is something that would be helpful to you, please view our 
         <a href="https://hnttax.us/services">services</a> page to learn more.
     </p>

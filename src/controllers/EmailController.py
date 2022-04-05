@@ -31,15 +31,14 @@ def send_csv_emails(status, db_id):
             logger.warning(f"[{fetcher.DB_TABLE_NAME}] retrieved already-sent row, skipping: id {item['id']}")
             continue
         
-        if item['currency'] != "USD" and item['status'] == "processed":
-            logger.error(f"[{fetcher.DB_TABLE_NAME}] non-USD currency ({item['id']}, {item['currency']}) - no automated email support yet, terminating")
-            continue
-        
         else:
-            logger.info(f"[{fetcher.DB_TABLE_NAME}] sending id {item['id']} with status {item['status']}")
+            logger.info(f"[{fetcher.DB_TABLE_NAME}] preparing to send id {item['id']} with status {item['status']}")
+
+            local_currency = item['currency']
+            
             # build hmtl/text file templates
-            html = generate_email_content(item['status'], item['wallet'], item['year'], filetype="html")
-            text = generate_email_content(item['status'], item['wallet'], item['year'], filetype="txt")
+            html = generate_email_content(item['status'], item['wallet'], item['year'], local_currency, filetype="html")
+            text = generate_email_content(item['status'], item['wallet'], item['year'], local_currency, filetype="txt")
 
             # we only need tp get an attachment csv if the status is processed, else skip this part
             # build filename to retrieve csv rewards from aws
@@ -54,6 +53,10 @@ def send_csv_emails(status, db_id):
                 
                 hotspot_attachment = get_csv_from_aws(s3_hotspot_path, "temp_hotspot.csv")
                 validator_attachment= get_csv_from_aws(s3_validator_path, "temp_validator.csv")
+
+                if hotspot_attachment is None and validator_attachment is None:
+                    logger.error(f"No valid attachments found in s3 for id {item['id']}, skipping sending this user email")
+                    continue
 
             # send email
             logger.info(f"[{fetcher.DB_TABLE_NAME}] sending email to {item['email']} (id {item['id']})")

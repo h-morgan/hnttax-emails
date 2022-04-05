@@ -15,7 +15,7 @@ def get_template_file_path(filename):
     return abs_file_path
 
 
-def generate_email_content(status, wallet, year, filetype):
+def generate_email_content(status, wallet, year, local_currency, filetype):
     
     # build path to templates folder
     dir_ = os.path.dirname(os.path.abspath(__file__))
@@ -34,7 +34,8 @@ def generate_email_content(status, wallet, year, filetype):
 
     file_contents = template.render(
         wallet = wallet,
-        year = year
+        year = year,
+        currency = local_currency
     )
     # save temp file 
     temp_filename = f"temp.{filetype}"
